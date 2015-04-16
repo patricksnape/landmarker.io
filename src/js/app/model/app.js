@@ -276,6 +276,26 @@ module.exports = Backbone.Model.extend({
         this.set('landmarks', null);
         return this._promiseLandmarksWithAsset(
             this.assetSource().previous());
-    }
+    },
 
+    loadPreviousLandmarks: function () {
+        var assetSource = this.assetSource();
+        var currentId = assetSource.asset().id;
+        var currentIndex = assetSource.assetIndex();
+        if (currentIndex != 0) {
+            var that = this;
+            this.set('landmarks', null);
+
+            Landmark.promiseLandmarkGroup(
+                assetSource.assets()[currentIndex - 1].id,
+                this.activeTemplate(), this.get('server')).then(function (landmarks) {
+                    landmarks.id = currentId;
+                    console.log('Swapping out landmarks with previous.');
+                    // now we know that this is resolved we set the landmarks on the
+                    // app. This way we know the landmarks will always be set with a
+                    // valid asset.
+                    that.set('landmarks', landmarks);
+                });
+        }
+    }
 });

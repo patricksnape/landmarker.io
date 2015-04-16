@@ -178,6 +178,20 @@ function initLandmarker(server, mode) {
             case 108:  // l = toggle [l]inks
                 app.toggleConnectivity();
                 break;
+            case 49:  // 1 = load previous landmarks
+                app.loadPreviousLandmarks();
+                break;
+            case 115: //  s - save
+                var spinner = new Notification.LandmarkSavingNotification();
+                var notification = new Notification.LandmarkSuccessFailureNotification();
+                app.landmarks().promiseSave().then(function () {
+                    spinner.stop();
+                    notification.success();
+                },
+                function () {
+                    spinner.stop();
+                    notification.failure();
+                });
         }
     });
 }
